@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-ink font-body antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(224, 164, 133, 0.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(183, 196, 172, 0.18), transparent 55%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+
+  /* Roligere fokusmarkering som passer paletten */
+  :focus-visible {
+    outline: 2px solid #C9764F;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .paper-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  }
+}
