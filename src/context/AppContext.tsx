@@ -7,15 +7,10 @@ export interface AppContextValue {
   setBirthdate: (iso: string | null) => void;
 }
 
-const AppContext = createContext<AppContextValue | null>(null);
+const AppContext = createContext<Omit<AppContextValue, 'currentWeek'> | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [birthdate, setBirthdateState] = useState<string | null>(() => loadBirthdate());
-
-  const currentWeek = useMemo(
-    () => (birthdate ? weekFromBirthdate(birthdate) : null),
-    [birthdate],
-  );
 
   const setBirthdate = useCallback((iso: string | null) => {
     if (iso) saveBirthdate(iso);
@@ -23,10 +18,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setBirthdateState(iso);
   }, []);
 
-  const value = useMemo(
-    () => ({ birthdate, currentWeek, setBirthdate }),
-    [birthdate, currentWeek, setBirthdate],
-  );
+  const value = useMemo(() => ({ birthdate, setBirthdate }), [birthdate, setBirthdate]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
@@ -34,5 +26,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useApp må brukes innenfor AppProvider');
-  return ctx;
+  // Regnes ut ved hver render, så en fane som står åpen i flere dager ikke viser gammel uke
+  return { ...ctx, currentWeek: ctx.birthdate ? weekFromBirthdate(ctx.birthdate) : null };
 }

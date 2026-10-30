@@ -27,10 +27,10 @@ export function clearBirthdate(): void {
   }
 }
 
-/** Antall hele dager mellom to datoer. */
+/** Antall kalenderdager mellom to datoer, uavhengig av klokkeslett og sommertid. */
 function daysBetween(from: Date, to: Date): number {
-  const ms = to.getTime() - from.getTime();
-  return Math.floor(ms / (1000 * 60 * 60 * 24));
+  const day = (d: Date) => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+  return Math.round((day(to) - day(from)) / (1000 * 60 * 60 * 24));
 }
 
 /**
@@ -50,14 +50,6 @@ export function clampWeek(week: number): number {
   if (week < 1) return 1;
   if (week > TOTAL_WEEKS) return TOTAL_WEEKS;
   return week;
-}
-
-/** Er barnet eldre enn det siste uketrinnet siden dekker? */
-export function isPastLastWeek(iso: string): boolean {
-  const birth = new Date(iso + 'T00:00:00');
-  if (isNaN(birth.getTime())) return false;
-  const days = daysBetween(birth, new Date());
-  return Math.floor(days / 7) + 1 > TOTAL_WEEKS;
 }
 
 /** Omtrentlig alder i måneder for en gitt uke (avrundet til én desimal). */

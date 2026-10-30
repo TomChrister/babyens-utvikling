@@ -9,7 +9,8 @@ interface Props {
 
 export default function BirthdateSetup({ initial, onSave, onSkip, compact }: Props) {
   const [value, setValue] = useState(initial ?? '');
-  const today = new Date().toISOString().slice(0, 10);
+  // sv-SE gir lokal dato som YYYY-MM-DD (toISOString ville gitt UTC-dato)
+  const today = new Date().toLocaleDateString('sv-SE');
 
   function handleSave() {
     if (value) onSave(value);
