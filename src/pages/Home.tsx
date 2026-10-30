@@ -30,7 +30,6 @@ export default function Home() {
         <BirthdateSetup
           onSave={(iso) => setBirthdate(iso)}
           onSkip={() => navigate('/uke/1')}
-          initial={birthdate}
         />
       </div>
     </div>

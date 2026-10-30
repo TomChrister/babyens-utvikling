@@ -523,8 +523,4 @@ export const WEEKS: WeekData[] = [
   },
 ];
 
-export function getWeek(week: number): WeekData | undefined {
-  return WEEKS.find((w) => w.week === week);
-}
-
 export const TOTAL_WEEKS = WEEKS.length;

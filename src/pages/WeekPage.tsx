@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { getWeek, TOTAL_WEEKS } from '../data/weeks';
+import { WEEKS, TOTAL_WEEKS } from '../data/weeks';
 import { clampWeek } from '../lib/date';
 import WeekView from '../components/WeekView';
 import WeekNav from '../components/WeekNav';
@@ -13,9 +13,9 @@ export default function WeekPage() {
 
   const parsed = Number(week);
   const valid = Number.isInteger(parsed) && parsed >= 1 && parsed <= TOTAL_WEEKS;
-  const data = valid ? getWeek(parsed) : undefined;
+  const data = WEEKS[parsed - 1];
 
-  const touchStartX = useRef<number | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   // Tastaturnavigasjon med piltaster
   useEffect(() => {
@@ -37,20 +37,22 @@ export default function WeekPage() {
   }, [parsed]);
 
   if (!valid) {
-    return <Navigate to={`/uke/${clampWeek(parsed || 1)}`} replace />;
+    return <Navigate to={`/uke/${clampWeek(Math.round(parsed) || 1)}`} replace />;
   }
-  if (!data) return null;
 
   function onTouchStart(e: React.TouchEvent) {
-    touchStartX.current = e.touches[0].clientX;
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }
   function onTouchEnd(e: React.TouchEvent) {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (touchStart.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStart.current.x;
+    const dy = e.changedTouches[0].clientY - touchStart.current.y;
+    touchStart.current = null;
+    // Skrå rulling skal ikke bytte uke
+    if (Math.abs(dx) <= Math.abs(dy)) return;
     const threshold = 60;
     if (dx < -threshold && parsed < TOTAL_WEEKS) navigate(`/uke/${parsed + 1}`);
     else if (dx > threshold && parsed > 1) navigate(`/uke/${parsed - 1}`);
-    touchStartX.current = null;
   }
 
   return (
